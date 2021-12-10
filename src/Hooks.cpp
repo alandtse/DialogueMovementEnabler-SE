@@ -59,9 +59,9 @@ namespace DME
 							idEvent->userEvent = idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#else
 							if (settings->rightHandControl)
-								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRLeft ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							else
-								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRRight ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#endif
 
 						}
