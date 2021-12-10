@@ -26,9 +26,9 @@ namespace DME
 			bool isInMenuMode = func();
 
 			bool movementControlsEnabled = pc->movementHandler->IsInputEventHandlingEnabled() && controlMap->IsMovementControlsEnabled();
-			if (a_event && *a_event && 
+			if (a_event && *a_event &&
 				#ifndef SKYRIMVR
-				!this->remapMode && 
+				!this->remapMode &&
 				#endif
 				!isInMenuMode && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME))
 			{
