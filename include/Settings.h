@@ -17,6 +17,7 @@ namespace DME
 
 		// General
 		bool unlockCamera;
+		bool rightHandControl;
 
 		// Controls
 		bool allowMovement[kTotal];

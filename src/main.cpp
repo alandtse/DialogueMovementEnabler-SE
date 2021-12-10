@@ -1,6 +1,6 @@
-#include "version.h"
 #include "Hooks.h"
 #include "Settings.h"
+#include "version.h"
 
 extern "C" {
 	DLLEXPORT SKSE::PluginVersionData SKSEPlugin_Version = []() {
@@ -49,3 +49,34 @@ extern "C" {
 		return true;
 	}
 };
+constexpr auto MESSAGE_BOX_TYPE = 0x00001010L;  // MB_OK | MB_ICONERROR | MB_SYSTEMMODAL
+
+extern "C" {
+	DLLEXPORT bool SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
+	{
+		a_info->infoVersion = SKSE::PluginInfo::kVersion;
+		a_info->name = Version::PROJECT.data();
+		a_info->version = Version::MAJOR;
+
+		if (a_skse->IsEditor())
+		{
+			SKSE::log::critical("Loaded in editor, marking as incompatible!");
+			return false;
+		}
+
+		if (a_skse->RuntimeVersion() <
+#ifndef SKYRIMVR
+			SKSE::RUNTIME_1_5_39
+#else
+			SKSE::RUNTIME_VR_1_4_15
+#endif
+		)
+		{
+			SKSE::log::critical("Unsupported runtime version " + a_skse->RuntimeVersion().string());
+			SKSE::WinAPI::MessageBox(nullptr, std::string("Unsupported runtime version " + a_skse->RuntimeVersion().string()).c_str(), "Dialogue Movement Enabler - Error", MESSAGE_BOX_TYPE);
+			return false;
+		}
+
+		return true;
+	}
+}

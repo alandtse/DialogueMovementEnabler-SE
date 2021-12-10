@@ -22,12 +22,15 @@ namespace DME
 
 			// SkyrimSouls compatibility
 			using func_t = bool (*)();
-			REL::Relocation<func_t> func(REL::ID{ 56833 });
+			REL::Relocation<func_t> func(REL::ID{ 56476 });
 			bool isInMenuMode = func();
 
 			bool movementControlsEnabled = pc->movementHandler->IsInputEventHandlingEnabled() && controlMap->IsMovementControlsEnabled();
-
-			if (a_event && *a_event && !this->remapMode && !isInMenuMode && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME))
+			if (a_event && *a_event && 
+				#ifndef SKYRIMVR
+				!this->remapMode && 
+				#endif
+				!isInMenuMode && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME))
 			{
 				for (RE::InputEvent* evn = *a_event; evn; evn = evn->next)
 				{
@@ -36,7 +39,11 @@ namespace DME
 						RE::IDEvent* idEvent = static_cast<RE::IDEvent*>(evn);
 						Settings* settings = Settings::GetSingleton();
 
+						#ifndef SKYRIMVR
 						Settings::ControlType controlType = inputDeviceManager->IsGamepadEnabled() ? Settings::ControlType::kController : Settings::ControlType::kKeyboardMouse;
+						#else
+						Settings::ControlType controlType = Settings::ControlType::kController;
+						#endif
 
 						// Movement
 						if (settings->allowMovement[controlType])
@@ -48,7 +55,15 @@ namespace DME
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->strafeRight, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->strafeRight : idEvent->userEvent;
 
 							// Controllers
+							#ifndef SKYRIMVR
 							idEvent->userEvent = idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
+							#else
+							if (settings->rightHandControl)
+								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRLeft ? userEvents->move : idEvent->userEvent;
+							else
+								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRRight ? userEvents->move : idEvent->userEvent;
+							#endif
+
 						}
 
 						//Run
@@ -196,18 +211,20 @@ namespace DME
 	{
 		Settings* settings = Settings::GetSingleton();
 
-		REL::Relocation<std::uintptr_t> vTable_mc(REL::ID{ 215773 });
+		REL::Relocation<std::uintptr_t> vTable_mc(REL::ID{ 269528 });
 		MenuControlsEx::_ProcessEvent = vTable_mc.write_vfunc(0x1, &MenuControlsEx::ProcessEvent_Hook);
 
 		//Hook ProcessMessage
-		REL::Relocation<std::uintptr_t> vTable_dm(REL::ID{ 215255 });
+		REL::Relocation<std::uintptr_t> vTable_dm(REL::ID{ 268589 });
 		DialogueMenuEx::_ProcessMessage = vTable_dm.write_vfunc(0x4, &DialogueMenuEx::ProcessMessage_Hook);
 		DialogueMenuEx::_AdvanceMovie = vTable_dm.write_vfunc(0x5, &DialogueMenuEx::AdvanceMovie_Hook);
 
+		#ifndef SKYRIMVR //VR doesn't have this function
 		if (settings->unlockCamera)
 		{
 			std::uint8_t buf[] = { 0xE9, 0xB1, 0x00, 0x00, 0x00, 0x90 };  //jmp + nop
-			REL::safe_write(REL::ID{ 42338 }.address() + 0x5AF, std::span<uint8_t>(buf));
+			REL::safe_write(REL::ID{ 41292 }.address() + 0x25, std::span<uint8_t>(buf));
 		}
+		#endif
 	}
 }

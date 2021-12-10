@@ -21,8 +21,13 @@ namespace DME
 		ini.LoadFile(R"(.\Data\SKSE\Plugins\DialogueMovementEnabler.ini)");
 
 		// General
+		#ifndef SKYRIMVR
 		settings->unlockCamera = ini.GetBoolValue("GENERAL", "bUnlockCamera", true);
 		ini.SetBoolValue("GENERAL", "bUnlockCamera", settings->unlockCamera, "#  Unlocks camera rotation so you can look around in any direction.", true);
+		#else
+		settings->rightHandControl = ini.GetBoolValue("GENERAL", "bRightHandControl", true);
+		ini.SetBoolValue("GENERAL", "bRightHandControl", settings->rightHandControl, "#  Right hand should control dialogue.", true);
+		#endif
 
 		// Controls - kb/m
 		settings->allowMovement[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowMovement", true);

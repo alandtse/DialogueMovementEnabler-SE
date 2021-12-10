@@ -1,10 +1,57 @@
 cmake_minimum_required(VERSION 3.21)
+set(NAME "DialogueMovementEnabler")
+set(VERSION 2.1.0)
+set(VR_VERSION 1)
 
-# Set up project
+# ---- Options ----
 
+option(COPY_BUILD "Copy the build output to the Skyrim directory." TRUE)
+option(BUILD_SKYRIMVR "Build for Skyrim VR" OFF)
+
+# Macros
+macro(set_from_environment VARIABLE)
+	if (NOT DEFINED ${VARIABLE} AND DEFINED ENV{${VARIABLE}})
+		set(${VARIABLE} $ENV{${VARIABLE}})
+	endif ()
+endmacro()
+
+set_from_environment(VCPKG_ROOT)
+if(BUILD_SKYRIMVR)
+	add_compile_definitions(SKYRIMVR)
+	add_compile_definitions(SKYRIMVR)
+	set_from_environment(CommonLibVRPath)
+	set(CommonLibPath ${CommonLibVRPath})
+	set(CommonLibName "CommonLibVR")
+	set_from_environment(SkyrimVRPath)
+	set(SkyrimPath ${SkyrimVRPath})
+	set(SkyrimVersion "Skyrim VR")
+	set(VERSION "${VERSION}.${VR_VERSION}")
+else()
+	set_from_environment(CommonLibSSEPath)
+	set(CommonLibPath ${CommonLibSSEPath})
+	set(CommonLibName "CommonLibSSE")
+	set_from_environment(Skyrim64Path)
+	set(SkyrimPath ${Skyrim64Path})
+	set(SkyrimVersion "Skyrim SSE")
+endif()
+message(
+	STATUS
+	"Building for ${SkyrimVersion} at ${SkyrimPath} with ${CommonLibName} at ${CommonLibPath}."
+)
+if (DEFINED VCPKG_ROOT)
+	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+	set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
+else ()
+	message(
+		WARNING
+		"Variable VCPKG_ROOT is not set. Continuing without vcpkg."
+	)
+endif ()
+
+# Set up Project
 project(
-	DialogueMovementEnabler
-	VERSION 2.1.0
+	${NAME}
+	VERSION ${VERSION}
 	LANGUAGES CXX
 )
 
@@ -20,7 +67,8 @@ configure_file(
 	@ONLY
 )
 
-# Include guards
+# ---- Include guards ----
+
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 	message(
 		FATAL_ERROR
@@ -34,7 +82,7 @@ source_group(
 	FILES ${SOURCES}
 )
 
-# Globals
+# ---- Globals ----
 
 if (MSVC)
 	add_compile_definitions(
@@ -53,7 +101,16 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
 
 set(Boost_USE_STATIC_LIBS ON)
 
-# Create DLL
+# ---- Create DLL ----
+
+if (DEFINED CommonLibPath AND NOT ${CommonLibPath} STREQUAL "" AND IS_DIRECTORY ${CommonLibPath})
+	add_subdirectory(${CommonLibPath} ${CommonLibName})
+else ()
+	message(
+		FATAL_ERROR
+		"Variable ${CommonLibName}Path is not set."
+	)
+endif()
 
 add_library(
 	${PROJECT_NAME}
@@ -79,15 +136,13 @@ target_include_directories(
 )
 
 # Dependencies
-option(SIMPLEINI_INCLUDE_DIR "")
-include_directories(${SIMPLEINI_INCLUDE_DIR})
-
 find_package(spdlog REQUIRED CONFIG)
+find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
 target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
-		CommonLibSSE::CommonLibSSE
+		${CommonLibName}::${CommonLibName}
 		spdlog::spdlog
 )
 
@@ -178,24 +233,23 @@ target_include_directories(
 	"${PROJECT_NAME}"
 	PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${SIMPLEINI_INCLUDE_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 # ---- Post build ----
 
-if (DIALOGUEMOVEMENTENABLER_DO_INSTALL)
-	if (DEFINED DIALOGUEMOVEMENTENABLER_INSTALL_PATH)
+if (COPY_BUILD)
+	if (DEFINED SkyrimPath)
 		add_custom_command(
 			TARGET ${PROJECT_NAME}
 			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${DIALOGUEMOVEMENTENABLER_INSTALL_PATH}
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${DIALOGUEMOVEMENTENABLER_INSTALL_PATH}
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${SkyrimPath}/Data/SKSE/Plugins/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${SkyrimPath}/Data/SKSE/Plugins/
 		)
 	else ()
 		message(
 			WARNING
-			"Variable DIALOGUEMOVEMENTENABLER_INSTALL_PATH is not defined. Skipping post-build copy command."
+			"Variable ${SkyrimPath} is not defined. Skipping post-build copy command."
 		)
 	endif ()
 endif ()

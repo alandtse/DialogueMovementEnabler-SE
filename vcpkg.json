@@ -1,0 +1,13 @@
+{
+  "name": "dialoguemovementenabler",
+  "version-string": "2.1.0",
+  "description": "Allows you to move around in Dialogue Menus.",
+  "homepage": "https://github.com/Vermunds/DialogueMovementEnabler-SE",
+  "license": "MIT",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "rsm-binary-io",
+    "simpleini",
+    "spdlog"
+  ]
+}
