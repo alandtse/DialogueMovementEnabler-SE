@@ -18,6 +18,7 @@ namespace DME
 		// General
 		bool unlockCamera;
 		bool rightHandControl;
+		bool disableCancelButton;
 
 		// Controls
 		bool allowMovement[kTotal];
@@ -32,7 +33,7 @@ namespace DME
 		bool allowRightAttack[kTotal];
 		bool allowHotkeys[kTotal];
 		bool allowShout[kTotal];
-
+		
 		// Auto-close
 		bool autoCloseMenus;
 		float autoCloseDistance;

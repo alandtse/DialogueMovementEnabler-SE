@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 set(NAME "DialogueMovementEnabler")
 set(VERSION 2.1.0)
-set(VR_VERSION 2)
+set(VR_VERSION 3)
 
 # ---- Options ----
 

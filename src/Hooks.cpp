@@ -49,6 +49,7 @@ namespace DME
 						if (settings->allowMovement[controlType])
 						{
 							// WASD
+							//SKSE::log::debug("event {}", idEvent->userEvent);
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->forward, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->forward : idEvent->userEvent;
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->back, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->back : idEvent->userEvent;
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->strafeLeft, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->strafeLeft : idEvent->userEvent;
@@ -138,6 +139,13 @@ namespace DME
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->hotkey7, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->hotkey7 : idEvent->userEvent;
 							idEvent->userEvent = controlMap->GetMappedKey(userEvents->hotkey8, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode ? userEvents->hotkey8 : idEvent->userEvent;
 						}
+
+						//Disable cancel button
+						if (settings->disableCancelButton && idEvent->userEvent == userEvents->cancel)
+						{
+							idEvent->userEvent = "";
+						}
+
 					}
 				}
 			}

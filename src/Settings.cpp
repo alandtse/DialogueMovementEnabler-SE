@@ -28,6 +28,8 @@ namespace DME
 		settings->rightHandControl = ini.GetBoolValue("GENERAL", "bRightHandControl", true);
 		ini.SetBoolValue("GENERAL", "bRightHandControl", settings->rightHandControl, "#  Right hand should control dialogue.", true);
 		#endif
+		settings->disableCancelButton = ini.GetBoolValue("GENERAL", "bDisableCancelButton", false);
+		ini.SetBoolValue("GENERAL", "bDisableCancelButton", settings->disableCancelButton, "#  Disable cancellation buttons; walking away is the only way to cancel dialogue. Consider reducing autoClose distance.", false);
 
 		// Controls - kb/m
 		settings->allowMovement[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowMovement", true);
