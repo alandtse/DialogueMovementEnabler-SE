@@ -18,8 +18,9 @@ namespace DME
 			RE::PlayerControls* pc = RE::PlayerControls::GetSingleton();
 			RE::ControlMap* controlMap = RE::ControlMap::GetSingleton();
 			RE::UserEvents* userEvents = RE::UserEvents::GetSingleton();
+			#ifndef SKYRIMVR
 			RE::BSInputDeviceManager* inputDeviceManager = RE::BSInputDeviceManager::GetSingleton();
-
+			#endif
 			// SkyrimSouls compatibility
 			using func_t = bool (*)();
 			REL::Relocation<func_t> func(REL::ID{ 56476 });
@@ -60,9 +61,9 @@ namespace DME
 							idEvent->userEvent = idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#else
 							if (settings->rightHandControl)
-								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							else
-								idEvent->userEvent = evn->device == INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#endif
 
 						}
@@ -222,7 +223,6 @@ namespace DME
 
 	void InstallHooks()
 	{
-		Settings* settings = Settings::GetSingleton();
 
 		REL::Relocation<std::uintptr_t> vTable_mc(REL::ID{ 269528 });
 		MenuControlsEx::_ProcessEvent = vTable_mc.write_vfunc(0x1, &MenuControlsEx::ProcessEvent_Hook);
@@ -233,6 +233,7 @@ namespace DME
 		DialogueMenuEx::_AdvanceMovie = vTable_dm.write_vfunc(0x5, &DialogueMenuEx::AdvanceMovie_Hook);
 
 		#ifndef SKYRIMVR //VR doesn't have this function
+		Settings* settings = Settings::GetSingleton();
 		if (settings->unlockCamera)
 		{
 			std::uint8_t buf[] = { 0xE9, 0xB1, 0x00, 0x00, 0x00, 0x90 };  //jmp + nop

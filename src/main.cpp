@@ -3,6 +3,7 @@
 #include "version.h"
 
 extern "C" {
+#ifndef SKYRIMVR
 	DLLEXPORT SKSE::PluginVersionData SKSEPlugin_Version = []() {
 		SKSE::PluginVersionData v{};
 		v.PluginVersion(REL::Version{ Version::MAJOR, Version::MINOR, Version::PATCH, 0 });
@@ -14,6 +15,7 @@ extern "C" {
 		v.sigScanning = false;
 		return v;
 	}();
+#endif
 
 	DLLEXPORT bool SKSEPlugin_Load(SKSE::LoadInterface* a_skse)
 	{
