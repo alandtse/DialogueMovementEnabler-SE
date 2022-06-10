@@ -43,16 +43,22 @@ cd DialogueMovementEnabler-SE
 git submodule update --init --recursive
 
 ```
+### AE
+```
+cmake --preset vs2022-windows-vcpkg-ae
+cmake --build build --config Release
+```
+
 ### SSE
 ```
-cmake -B build -S . -DVCPKG_TARGET_TRIPLET=x64-windows-static-md
+cmake --preset vs2022-windows-vcpkg
+cmake --build build --config Release
 ```
-Open build/DialogueMovementEnabler.sln in Visual Studio to build dll.
 ### VR
 ```
-cmake -B build2 -S . -DVCPKG_TARGET_TRIPLET=x64-windows-static-md -DBUILD_SKYRIMVR=On
+cmake --preset vs2022-windows-vcpkg-vr
+cmake --build buildvr --config Release
 ```
-Open build2/DialogueMovementEnabler.sln in Visual Studio to build dll.
 
 ## License
 [MIT](LICENSE)
