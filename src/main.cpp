@@ -28,7 +28,7 @@ extern "C" {
 		spdlog::set_default_logger(std::move(log));
 		spdlog::set_pattern("%s(%#): [%^%l%$] %v", spdlog::pattern_time_type::local);
 
-		SKSE::log::info("Dialogue Movement Enabler v" + std::string(Version::NAME) + " - (" + std::string(__TIMESTAMP__) + ")");
+		SKSE::log::info("Dialogue Movement Enabler v{} - ({})"sv, Version::NAME, __TIMESTAMP__);
 
 		if (a_skse->IsEditor())
 		{
@@ -72,7 +72,7 @@ extern "C" {
 #endif
 		)
 		{
-			SKSE::log::critical("Unsupported runtime version " + a_skse->RuntimeVersion().string());
+			SKSE::log::critical("Unsupported runtime version {}"sv, a_skse->RuntimeVersion().string());
 			SKSE::WinAPI::MessageBox(nullptr, std::string("Unsupported runtime version " + a_skse->RuntimeVersion().string()).c_str(), "Dialogue Movement Enabler - Error", MESSAGE_BOX_TYPE);
 			return false;
 		}
