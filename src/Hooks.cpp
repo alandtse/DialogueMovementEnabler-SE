@@ -65,8 +65,18 @@ namespace DME
 							else
 								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#endif
-
 						}
+
+						//Rotation
+						#ifdef SKYRIMVR
+						if (settings->allowRotation[controlType])
+						{
+							if (settings->rightHandControl)
+								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+							else
+								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+						}
+						#endif
 
 						//Run
 						if (settings->allowRun[controlType] && controlMap->GetMappedKey(userEvents->run, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode)

@@ -44,6 +44,7 @@ namespace DME
 		settings->allowRightAttack[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowRightAttack", false);
 		settings->allowHotkeys[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowHotkeys", false);
 		settings->allowShout[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowShout", false);
+		settings->allowRotation[ControlType::kKeyboardMouse] = ini.GetBoolValue("CONTROLS_KEYBOARD", "bAllowRotation", false);
 
 		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowMovement", settings->allowMovement[ControlType::kKeyboardMouse], nullptr, true);
 		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowRun", settings->allowRun[ControlType::kKeyboardMouse], nullptr, true);
@@ -57,6 +58,7 @@ namespace DME
 		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowRightAttack", settings->allowRightAttack[ControlType::kKeyboardMouse], nullptr, true);
 		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowHotkeys", settings->allowHotkeys[ControlType::kKeyboardMouse], nullptr, true);
 		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowShout", settings->allowShout[ControlType::kKeyboardMouse], nullptr, true);
+		ini.SetBoolValue("CONTROLS_KEYBOARD", "bAllowRotation", settings->allowRotation[ControlType::kKeyboardMouse], nullptr, true);
 
 		// Controls - controller
 		settings->allowMovement[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowMovement", true);
@@ -71,6 +73,7 @@ namespace DME
 		settings->allowRightAttack[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRightAttack", false);
 		settings->allowHotkeys[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowHotkeys", false);
 		settings->allowShout[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowShout", false);
+		settings->allowRotation[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", false);
 
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowMovement", settings->allowMovement[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRun", settings->allowRun[ControlType::kController], nullptr, true);
@@ -84,6 +87,7 @@ namespace DME
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRightAttack", settings->allowRightAttack[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowHotkeys", settings->allowHotkeys[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowShout", settings->allowShout[ControlType::kController], nullptr, true);
+		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", settings->allowRotation[ControlType::kController], nullptr, true);
 
 		//Auto-close
 		settings->autoCloseMenus = ini.GetBoolValue("AUTOCLOSE", "bAutoCloseMenus", true);

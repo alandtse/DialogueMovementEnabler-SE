@@ -33,6 +33,7 @@ namespace DME
 		bool allowRightAttack[kTotal];
 		bool allowHotkeys[kTotal];
 		bool allowShout[kTotal];
+		bool allowRotation[kTotal];
 		
 		// Auto-close
 		bool autoCloseMenus;
