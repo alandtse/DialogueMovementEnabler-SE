@@ -21,30 +21,29 @@ namespace DME
 		       a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kWMRSecondary;
 	}
 
-	// Every frame, Actor's VR "comfort radius" Havok collision check (normally a capsule cast
-	// around the player's head, radius fPlayerComfortRadiusMeters:VRTeleport) sets/clears a
-	// flag (bit 0 at Actor+0x12D7) that drives the screen-fade-to-black. While a dialogue is
-	// open, that same function retargets the cast at DialogueMenu::occlusionCheckNode's world
-	// position with a different radius (fPlayerDialogueMenuOcclusionCheckSize:VRUI) -- that's
-	// the "occlusion" check issue #2 is about. But the *default* (non-dialogue) cast around the
-	// player's own head still runs unconditionally in every other case, including when a
-	// dialogue is open, and since NPCs stand close to the player during dialogue by design,
-	// that default cast alone can trip the same fade.
+	// Every frame, RE::PlayerCharacter::UpdateVRComfortCheck (a per-frame VR "comfort radius"
+	// Havok collision check, normally a capsule cast around the player's head, radius
+	// fPlayerComfortRadiusMeters:VRTeleport) sets/clears playerFlags.vrComfortFadeActive, which
+	// drives the screen-fade-to-black. While a dialogue is open, that same function retargets
+	// the cast at DialogueMenu::occlusionCheckNode's world position with a different radius
+	// (fPlayerDialogueMenuOcclusionCheckSize:VRUI) -- that's the "occlusion" check issue #2 is
+	// about. But the *default* (non-dialogue) cast around the player's own head still runs
+	// unconditionally in every other case, including when a dialogue is open, and since NPCs
+	// stand close to the player during dialogue by design, that default cast alone can trip the
+	// same fade.
 	//
 	// The reliable fix is to skip the whole per-frame check while a dialogue is open, rather
 	// than try to selectively neutralize one of its internal branches, and to force the flag to
 	// "not occluded" instead of leaving whatever state it was last computed to.
-	void ActorUpdateVRComfortCheck_Hook(RE::Actor* a_actor)
+	void PlayerCharacterUpdateVRComfortCheck_Hook(RE::PlayerCharacter* a_player)
 	{
 		if (Settings::GetSingleton()->disableOcclusionCheck && RE::UI::GetSingleton()->IsMenuOpen(RE::DialogueMenu::MENU_NAME))
 		{
-			*(reinterpret_cast<std::uint8_t*>(a_actor) + 0x12D7) &= 0xFE;
+			a_player->playerFlags.vrComfortFadeActive = false;
 			return;
 		}
 
-		using func_t = decltype(&ActorUpdateVRComfortCheck_Hook);
-		REL::Relocation<func_t> original{ REL::Offset(0x6B9AA0) };
-		original(a_actor);
+		a_player->UpdateVRComfortCheck();
 	}
 #endif
 
@@ -310,11 +309,12 @@ namespace DME
 #ifdef SKYRIMVR
 		if (Settings::GetSingleton()->disableOcclusionCheck)
 		{
-			// Redirect the sole call site of the VR comfort/occlusion check (RE'd via Ghidra) to
-			// ActorUpdateVRComfortCheck_Hook, which no-ops the whole check while a dialogue is
-			// open instead of trying to neutralize just its dialogue-specific branch.
+			// Redirect the sole call site of RE::PlayerCharacter::UpdateVRComfortCheck (RE'd via
+			// Ghidra) to PlayerCharacterUpdateVRComfortCheck_Hook, which no-ops the whole check
+			// while a dialogue is open instead of trying to neutralize just its dialogue-specific
+			// branch.
 			REL::Relocation<std::uintptr_t> comfortCheckCallSite{ REL::Offset(0x6B53CE) };
-			comfortCheckCallSite.write_call<5>(&ActorUpdateVRComfortCheck_Hook);
+			comfortCheckCallSite.write_call<5>(&PlayerCharacterUpdateVRComfortCheck_Hook);
 		}
 #endif
 
