@@ -13,11 +13,11 @@ namespace DME
 		static AutoCloseManager* GetSingleton();
 
 	private:
-		AutoCloseManager(){};
-		~AutoCloseManager(){};
+		AutoCloseManager() {};
+		~AutoCloseManager() {};
 		AutoCloseManager(const AutoCloseManager&) = delete;
 		AutoCloseManager& operator=(const AutoCloseManager&) = delete;
-		
+
 		struct AutoCloseData
 		{
 			RE::TESObjectREFR* target = nullptr;

@@ -76,9 +76,9 @@ namespace DME
 			RE::UI* ui = RE::UI::GetSingleton();
 			RE::PlayerControls* pc = RE::PlayerControls::GetSingleton();
 			RE::UserEvents* userEvents = RE::UserEvents::GetSingleton();
-			#ifndef SKYRIMVR
+#ifndef SKYRIMVR
 			RE::BSInputDeviceManager* inputDeviceManager = RE::BSInputDeviceManager::GetSingleton();
-			#endif
+#endif
 			// SkyrimSouls compatibility
 			using func_t = bool (*)();
 			REL::Relocation<func_t> func(REL::ID{ 56476 });
@@ -98,11 +98,11 @@ namespace DME
 						RE::IDEvent* idEvent = static_cast<RE::IDEvent*>(evn);
 						Settings* settings = Settings::GetSingleton();
 
-						#ifndef SKYRIMVR
+#ifndef SKYRIMVR
 						Settings::ControlType controlType = inputDeviceManager->IsGamepadEnabled() ? Settings::ControlType::kController : Settings::ControlType::kKeyboardMouse;
-						#else
+#else
 						Settings::ControlType controlType = Settings::ControlType::kController;
-						#endif
+#endif
 
 						// Movement
 						if (settings->allowMovement[controlType])
@@ -113,23 +113,23 @@ namespace DME
 							idEvent->userEvent = IsMappedToSameButton(idEvent->idCode, idEvent->device.get(), userEvents->strafeLeft) ? userEvents->strafeLeft : idEvent->userEvent;
 							idEvent->userEvent = IsMappedToSameButton(idEvent->idCode, idEvent->device.get(), userEvents->strafeRight) ? userEvents->strafeRight : idEvent->userEvent;
 
-							// Controllers
-							#ifndef SKYRIMVR
+// Controllers
+#ifndef SKYRIMVR
 							idEvent->userEvent = idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
-							#else
+#else
 							if (settings->rightHandControl)
 								idEvent->userEvent = IsSecondaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							else
 								idEvent->userEvent = IsPrimaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
-							#endif
+#endif
 						}
 
-						//Rotation
-						#ifdef SKYRIMVR
+//Rotation
+#ifdef SKYRIMVR
 						if (settings->allowRotation[controlType] && evn->GetEventType() == RE::INPUT_EVENT_TYPE::kThumbstick)
 						{
 							RE::ThumbstickEvent* thumbEvent = static_cast<RE::ThumbstickEvent*>(evn);
-							bool isHorizontal = std::fabs(thumbEvent->xValue) > std::fabs(thumbEvent->yValue) * 2.0f; //Bias towards dialogue option selection 60 vs 30 degrees
+							bool isHorizontal = std::fabs(thumbEvent->xValue) > std::fabs(thumbEvent->yValue) * 2.0f;  //Bias towards dialogue option selection 60 vs 30 degrees
 
 							if (isHorizontal)
 							{
@@ -139,7 +139,7 @@ namespace DME
 									idEvent->userEvent = IsSecondaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
 							}
 						}
-						#endif
+#endif
 
 						//Run
 						if (settings->allowRun[controlType] && IsMappedToSameButton(idEvent->idCode, idEvent->device.get(), userEvents->run))
@@ -219,7 +219,6 @@ namespace DME
 						{
 							idEvent->userEvent = "";
 						}
-
 					}
 				}
 			}
@@ -292,12 +291,10 @@ namespace DME
 			AutoCloseManager::GetSingleton()->CheckAutoClose();
 			return _AdvanceMovie(this, a_interval, a_currentTime);
 		}
-
 	};
 
 	void InstallHooks()
 	{
-
 		REL::Relocation<std::uintptr_t> vTable_mc(RE::VTABLE_MenuControls[0]);
 		MenuControlsEx::_ProcessEvent = vTable_mc.write_vfunc(0x1, &MenuControlsEx::ProcessEvent_Hook);
 
@@ -318,13 +315,13 @@ namespace DME
 		}
 #endif
 
-		#ifndef SKYRIMVR //VR doesn't have this function
+#ifndef SKYRIMVR  //VR doesn't have this function
 		Settings* settings = Settings::GetSingleton();
 		if (settings->unlockCamera)
 		{
 			std::uint8_t buf[] = { 0xE9, 0xB1, 0x00, 0x00, 0x00, 0x90 };  //jmp + nop
 			REL::safe_write(REL::ID{ 41292 }.address() + 0x25, std::span<uint8_t>(buf));
 		}
-		#endif
+#endif
 	}
 }

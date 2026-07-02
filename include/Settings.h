@@ -12,7 +12,7 @@ namespace DME
 
 			kTotal
 		};
-		
+
 		static Settings* GetSingleton();
 
 		// General
@@ -37,15 +37,15 @@ namespace DME
 		bool allowHotkeys[kTotal];
 		bool allowShout[kTotal];
 		bool allowRotation[kTotal];
-		
+
 		// Auto-close
 		bool autoCloseMenus;
 		float autoCloseDistance;
 		float autoCloseTolerance;
 
 	private:
-		Settings(){};
-		~Settings(){};
+		Settings() {};
+		~Settings() {};
 		Settings(const Settings&) = delete;
 		Settings& operator=(const Settings&) = delete;
 	};

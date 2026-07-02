@@ -2,7 +2,8 @@
 #include "Settings.h"
 #include "version.h"
 
-extern "C" {
+extern "C"
+{
 #ifndef SKYRIMVR
 	DLLEXPORT SKSE::PluginVersionData SKSEPlugin_Version = []() {
 		SKSE::PluginVersionData v{};
@@ -53,7 +54,8 @@ extern "C" {
 };
 constexpr auto MESSAGE_BOX_TYPE = 0x00001010L;  // MB_OK | MB_ICONERROR | MB_SYSTEMMODAL
 
-extern "C" {
+extern "C"
+{
 	DLLEXPORT bool SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 	{
 		a_info->infoVersion = SKSE::PluginInfo::kVersion;
