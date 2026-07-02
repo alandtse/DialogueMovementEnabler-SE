@@ -1,0 +1,72 @@
+# Reusable build: compiles the VR variant with CMake + vcpkg (VS2022/v143 preset)
+# and uploads the binaries as an artifact. Called by build.yaml (CI) and
+# release.yaml (packaging), so the toolchain is defined in exactly one place.
+#
+# SE/AE presets exist in CMakePresets.json but aren't built here — only the VR
+# build is published for this fork.
+name: "_build"
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: "Name for the uploaded binaries artifact."
+        type: string
+        default: dialogue-movement-enabler-vr-binaries
+      ref:
+        description: "Git ref to build. Empty = the triggering commit (CI default)."
+        type: string
+        default: ""
+    outputs:
+      artifact-name:
+        description: "Artifact name the binaries were uploaded under."
+        value: ${{ inputs.artifact-name }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (CMake · vs2022-windows-vcpkg-vr · Release)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+          submodules: recursive
+
+      # GitHub-hosted Windows runners ship vcpkg preinstalled at VCPKG_INSTALLATION_ROOT,
+      # which the vs2022-windows-vcpkg-vr preset already points its toolchain file at.
+      - name: Enable vcpkg GitHub Actions binary cache
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Configure
+        env:
+          VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        # Runner has no SkyrimVRPath, so COPY_BUILD's post-build deploy step is disabled
+        # rather than left to warn-and-skip on every build.
+        run: cmake --preset vs2022-windows-vcpkg-vr -DCOPY_BUILD=OFF
+
+      - name: Build
+        env:
+          VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        run: cmake --build buildvr --config Release
+
+      - name: Stage binaries
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path staging | Out-Null
+          Copy-Item "buildvr/Release/DialogueMovementEnabler.dll" staging/
+          Copy-Item "buildvr/Release/DialogueMovementEnabler.pdb" staging/
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: staging/*
+          if-no-files-found: error
