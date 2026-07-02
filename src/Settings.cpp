@@ -71,7 +71,7 @@ namespace DME
 		settings->allowRightAttack[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRightAttack", false);
 		settings->allowHotkeys[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowHotkeys", false);
 		settings->allowShout[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowShout", false);
-		settings->allowRotation[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", false);
+		settings->allowRotation[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", true);
 
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowMovement", settings->allowMovement[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRun", settings->allowRun[ControlType::kController], nullptr, true);
