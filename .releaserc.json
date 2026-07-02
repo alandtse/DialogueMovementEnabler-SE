@@ -8,7 +8,7 @@
         "replacements": [
           {
             "files": ["CMakeLists.txt"],
-            "from": "set\\(VERSION .*\\)",
+            "from": "set\\(VERSION \\d[\\d.]*\\)",
             "to": "set(VERSION ${nextRelease.version})",
             "results": [
               {

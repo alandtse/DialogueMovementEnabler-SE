@@ -28,7 +28,9 @@ permissions:
 jobs:
   build:
     name: Build (CMake · vs2022-windows-vcpkg-vr · Release)
-    runs-on: windows-latest
+    # Pinned rather than windows-latest: as of image windows-2025-vs2026, -latest ships VS 2026,
+    # which CMake's "Visual Studio 17 2022" generator (vs2022-windows-vcpkg-vr preset) can't find.
+    runs-on: windows-2022
     steps:
       - name: Checkout (with submodules)
         uses: actions/checkout@v7
