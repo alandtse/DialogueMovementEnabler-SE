@@ -27,6 +27,8 @@ namespace DME
 		#else
 		settings->rightHandControl = ini.GetBoolValue("GENERAL", "bRightHandControl", true);
 		ini.SetBoolValue("GENERAL", "bRightHandControl", settings->rightHandControl, "#  Right hand should control dialogue.", true);
+		settings->disableOcclusionCheck = ini.GetBoolValue("GENERAL", "bDisableOcclusionCheck", true);
+		ini.SetBoolValue("GENERAL", "bDisableOcclusionCheck", settings->disableOcclusionCheck, "#  Skips the game's VR comfort/occlusion check while a dialogue is open, working around a black screen that can occur when moving during dialogue. Does not fix black screen from walking directly into geometry.", true);
 		#endif
 		settings->disableCancelButton = ini.GetBoolValue("GENERAL", "bDisableCancelButton", false);
 		ini.SetBoolValue("GENERAL", "bDisableCancelButton", settings->disableCancelButton, "#  Disable cancellation buttons; walking away is the only way to cancel dialogue. Consider reducing autoClose distance.", false);

@@ -39,6 +39,7 @@ extern "C" {
 		}
 
 		SKSE::Init(a_skse);
+		SKSE::AllocTrampoline(1 << 4);
 
 		DME::LoadSettings();
 		SKSE::log::info("Settings loaded.");

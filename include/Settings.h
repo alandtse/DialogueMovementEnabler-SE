@@ -19,6 +19,9 @@ namespace DME
 		bool unlockCamera;
 		bool rightHandControl;
 		bool disableCancelButton;
+#ifdef SKYRIMVR
+		bool disableOcclusionCheck;
+#endif
 
 		// Controls
 		bool allowMovement[kTotal];
