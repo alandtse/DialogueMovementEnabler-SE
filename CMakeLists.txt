@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.31)
 set(NAME "DialogueMovementEnabler")
 set(VERSION 2.2.0)
 set(VR_VERSION 1)
@@ -79,6 +79,9 @@ project(
 	VERSION ${VERSION}
 	LANGUAGES CXX
 )
+set(FORMATTED_NAME "Dialogue Movement Enabler")
+set(LICENSE "MIT License")
+set(AUTHOR "Vermunds")
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.h.in
