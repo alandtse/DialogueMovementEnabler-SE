@@ -117,7 +117,8 @@ jobs:
 
   # Upload to Nexus, reusing semantic-release's curated notes as the changelog.
   # Default is a dry-run (report only). Set repo variable NEXUS_AUTO_UPLOAD=true
-  # (plus the UNEX_APIKEY secret) to upload for real on push-driven releases.
+  # (plus the UNEX_APIKEY and UNEX_NEXUSMODS_SESSION_COOKIE secrets) to upload for
+  # real on push-driven releases.
   nexus:
     name: Nexus upload
     needs: [semantic-release, build, package]
@@ -129,3 +130,4 @@ jobs:
       changelog: ${{ needs.semantic-release.outputs.new_release_notes }}
     secrets:
       UNEX_APIKEY: ${{ secrets.UNEX_APIKEY }}
+      UNEX_NEXUSMODS_SESSION_COOKIE: ${{ secrets.UNEX_NEXUSMODS_SESSION_COOKIE }}

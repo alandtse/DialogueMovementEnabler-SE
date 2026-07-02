@@ -8,9 +8,15 @@
 # the Nexus website (Files tab -> "API Info", or the Manage Files edit menu) and is
 # reused for every subsequent version so updates land in the same file slot.
 #
+# The official API can't set the Nexus changelog tab, so a second, best-effort job
+# (upload-changelog) updates it afterward via the session-cookie uploader
+# (upload-nexus.yml) with check_existing=true, which skips re-uploading the file
+# (already there from the official step) and just sets the changelog text.
+#
 # Safety: dry_run defaults to true (report only, never uploads). A real upload needs
-# repo secret UNEX_APIKEY configured — then dispatch with dry_run=false (release.yaml
-# flips it via the NEXUS_AUTO_UPLOAD repo variable).
+# repo secrets UNEX_APIKEY and UNEX_NEXUSMODS_SESSION_COOKIE configured — then
+# dispatch with dry_run=false (release.yaml flips it via the NEXUS_AUTO_UPLOAD repo
+# variable).
 #
 # Nexus page: https://www.nexusmods.com/skyrimspecialedition/mods/59816
 name: "Nexus: Upload VR Release"
@@ -69,6 +75,8 @@ on:
         default: ""
     secrets:
       UNEX_APIKEY:
+        required: false
+      UNEX_NEXUSMODS_SESSION_COOKIE:
         required: false
 
 # Read-only on GitHub: jobs list/download the release and write only to Nexus.
@@ -220,4 +228,26 @@ jobs:
       nexus_mod_id: ${{ inputs.nexus_mod_id || '59816' }}
       nexus_game_id: skyrimspecialedition
     secrets:
+      UNEX_APIKEY: ${{ secrets.UNEX_APIKEY }}
+
+  # Best-effort: update the Nexus mod changelog tab via the session-cookie uploader AFTER
+  # the official file upload. check_existing finds the file the official step just
+  # uploaded and skips re-uploading it, but still sets the changelog. BUTR treats a
+  # changelog failure as a warning (not a job failure), so a stale cookie never blocks
+  # the release -- only the changelog update is missed (re-run to retry).
+  upload-changelog:
+    name: Update Nexus changelog
+    needs: [prepare, upload]
+    if: needs.prepare.outputs.dry_run != 'true'
+    uses: alandtse/nexus-workflows/.github/workflows/upload-nexus.yml@main
+    with:
+      nexus_game_id: skyrimspecialedition
+      nexus_mod_id: ${{ inputs.nexus_mod_id || '59816' }}
+      tag_name: ${{ needs.prepare.outputs.tag }}
+      mod_version: ${{ needs.prepare.outputs.version }}
+      mod_filename: ${{ inputs.mod_filename || 'Dialogue Movement Enabler VR' }}
+      changelog: ${{ needs.prepare.outputs.changelog }}
+      check_existing: true
+    secrets:
+      UNEX_NEXUSMODS_SESSION_COOKIE: ${{ secrets.UNEX_NEXUSMODS_SESSION_COOKIE }}
       UNEX_APIKEY: ${{ secrets.UNEX_APIKEY }}
