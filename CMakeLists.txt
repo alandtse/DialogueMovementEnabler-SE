@@ -131,7 +131,7 @@ set(Boost_USE_STATIC_LIBS ON)
 
 # ---- Dependencies ----
 find_package(spdlog REQUIRED CONFIG)
-find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
+find_package(SimpleIni REQUIRED CONFIG)
 
 
 if (DEFINED CommonLibPath AND NOT ${CommonLibPath} STREQUAL "" AND IS_DIRECTORY ${CommonLibPath})
@@ -170,7 +170,6 @@ target_include_directories(
 	PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR}/include
 		${CMAKE_CURRENT_SOURCE_DIR}/src
-		${SIMPLEINI_INCLUDE_DIRS}
 		${SRELL_INCLUDE_DIRS}
 )
 
@@ -179,6 +178,7 @@ target_link_libraries(
 	PRIVATE
 		${CommonLibName}::${CommonLibName}
 		spdlog::spdlog
+		SimpleIni::SimpleIni
 )
 
 if (MSVC)
