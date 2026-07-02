@@ -1,0 +1,20 @@
+# PR title lint: this repo uses Conventional Commits, and semantic-release derives
+# the next version from commit subjects, so validate PR titles the same way the
+# sibling repos do (imgui-vr-helper, devbench, Open Shaders).
+name: "PR: Lint"
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  title:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
