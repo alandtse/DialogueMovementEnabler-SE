@@ -71,6 +71,7 @@ namespace DME
 		settings->allowRightAttack[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRightAttack", false);
 		settings->allowHotkeys[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowHotkeys", false);
 		settings->allowShout[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowShout", false);
+		settings->allowRotation[ControlType::kController] = ini.GetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", false);
 
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowMovement", settings->allowMovement[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRun", settings->allowRun[ControlType::kController], nullptr, true);
@@ -84,6 +85,7 @@ namespace DME
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRightAttack", settings->allowRightAttack[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowHotkeys", settings->allowHotkeys[ControlType::kController], nullptr, true);
 		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowShout", settings->allowShout[ControlType::kController], nullptr, true);
+		ini.SetBoolValue("CONTROLS_CONTROLLER", "bAllowRotation", settings->allowRotation[ControlType::kController], nullptr, true);
 
 		//Auto-close
 		settings->autoCloseMenus = ini.GetBoolValue("AUTOCLOSE", "bAutoCloseMenus", true);

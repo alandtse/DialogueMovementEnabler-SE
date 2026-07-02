@@ -65,8 +65,24 @@ namespace DME
 							else
 								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#endif
-
 						}
+
+						//Rotation
+						#ifdef SKYRIMVR
+						if (settings->allowRotation[controlType] && evn->GetEventType() == RE::INPUT_EVENT_TYPE::kThumbstick)
+						{
+							RE::ThumbstickEvent* thumbEvent = static_cast<RE::ThumbstickEvent*>(evn);
+							bool isHorizontal = std::fabs(thumbEvent->xValue) > std::fabs(thumbEvent->yValue) * 2.0f; //Bias towards dialogue option selection 60 vs 30 degrees
+
+							if (isHorizontal)
+							{
+								if (settings->rightHandControl)
+									idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+								else
+									idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+							}
+						}
+						#endif
 
 						//Run
 						if (settings->allowRun[controlType] && controlMap->GetMappedKey(userEvents->run, idEvent->device.get(), GAMEPLAY_CONTEXT) == idEvent->idCode)
