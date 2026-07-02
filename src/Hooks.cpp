@@ -6,6 +6,24 @@ namespace DME
 {
 	constexpr RE::UserEvents::INPUT_CONTEXT_ID GAMEPLAY_CONTEXT = RE::UserEvents::INPUT_CONTEXT_ID::kGameplay;
 
+#ifdef SKYRIMVR
+	// Right/left hand controllers no longer share a single device id; each headset family
+	// (Vive/Oculus/WMR) has its own primary (dominant hand) and secondary device id.
+	inline bool IsPrimaryHandDevice(RE::INPUT_DEVICE a_device)
+	{
+		return a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kVivePrimary ||
+		       a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kOculusPrimary ||
+		       a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kWMRPrimary;
+	}
+
+	inline bool IsSecondaryHandDevice(RE::INPUT_DEVICE a_device)
+	{
+		return a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kViveSecondary ||
+		       a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kOculusSecondary ||
+		       a_device == RE::INPUT_DEVICES::INPUT_DEVICE::kWMRSecondary;
+	}
+#endif
+
 	class MenuControlsEx : public RE::MenuControls
 	{
 	public:
@@ -61,9 +79,9 @@ namespace DME
 							idEvent->userEvent = idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#else
 							if (settings->rightHandControl)
-								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = IsSecondaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							else
-								idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
+								idEvent->userEvent = IsPrimaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->move : idEvent->userEvent;
 							#endif
 						}
 
@@ -77,9 +95,9 @@ namespace DME
 							if (isHorizontal)
 							{
 								if (settings->rightHandControl)
-									idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRRight && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+									idEvent->userEvent = IsPrimaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
 								else
-									idEvent->userEvent = evn->device == RE::INPUT_DEVICES::INPUT_DEVICE::kVRLeft && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
+									idEvent->userEvent = IsSecondaryHandDevice(evn->device.get()) && idEvent->userEvent == userEvents->leftStick ? userEvents->look : idEvent->userEvent;
 							}
 						}
 						#endif

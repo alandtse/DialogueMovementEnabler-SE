@@ -75,7 +75,7 @@ extern "C" {
 		)
 		{
 			SKSE::log::critical("Unsupported runtime version {}"sv, a_skse->RuntimeVersion().string());
-			SKSE::WinAPI::MessageBox(nullptr, std::string("Unsupported runtime version " + a_skse->RuntimeVersion().string()).c_str(), "Dialogue Movement Enabler - Error", MESSAGE_BOX_TYPE);
+			REX::W32::MessageBoxA(nullptr, std::string("Unsupported runtime version " + a_skse->RuntimeVersion().string()).c_str(), "Dialogue Movement Enabler - Error", MESSAGE_BOX_TYPE);
 			return false;
 		}
 
